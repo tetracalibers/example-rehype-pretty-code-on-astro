@@ -15,7 +15,7 @@ import {
   Applicative
 } from "fp-ts/lib/Option"
 import { lookup, of as ofA, filter, sequence } from "fp-ts/lib/Array"
-import { flow, pipe } from "fp-ts/lib/function"
+import { constFalse, flow, pipe } from "fp-ts/lib/function"
 import type { Element, ElementContent, Text } from "hast"
 import { left, match as matchE, right, type Either } from "fp-ts/lib/Either"
 import { validateHTMLColorHex, validateHTMLColorName, validateHTMLColorRgb } from "validate-color"
@@ -72,10 +72,6 @@ const mergeToken = (nextToken: string) => (token: string) => {
   return token.concat(nextToken)
 }
 
-const inverseBoolean = <A>(fn: (a: A) => boolean) => {
-  return (a: A) => !fn(a)
-}
-
 const visitMergeNextToken =
   (
     index: number,
@@ -106,9 +102,14 @@ const visitMergeNextToken =
       return pipe(nextToken, mergeToken(token), some)
     }
 
+    // 返り値のbooleanを反転させるコンビネータ
+    const not = <A>(fn: (a: A) => boolean) => {
+      return (a: A) => !fn(a)
+    }
+
     return pipe(
       lookAhead(index, $parent),
-      map(judgeContinue(inverseBoolean(endCondition))),
+      map(judgeContinue(not(endCondition))),
       chain(flow(matchE(end(token), flow(judgeContinue(allowToken), matchE(end(token), next(token))))))
     )
   }
@@ -136,9 +137,6 @@ const isOpenParen = (str: string) => {
 const isCloseParen = (str: string) => {
   return str === ")" || str === ");"
 }
-
-// 常にtrueを返す関数
-const neverEnd = () => false
 
 // booleanを返す関数を合成する
 const pipeValidation = (...fns: ((str: string) => boolean)[]) => {
@@ -182,7 +180,7 @@ const checkMaybeHex = (token: string, i: number, $tokens: ElementContent[]) => {
     orElse(() =>
       pipe(
         token,
-        visitMergeNextToken(i, $tokens, isHexAlphaNumLength, neverEnd),
+        visitMergeNextToken(i, $tokens, isHexAlphaNumLength, constFalse),
         map(removeSemicolon),
         chain(fromPredicate(validateHTMLColorHex))
       )

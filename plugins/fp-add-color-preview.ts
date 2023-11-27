@@ -164,9 +164,11 @@ const isIncludeRgb = (str: string) => {
   return str.includes("rgb")
 }
 
-const wrapObject = (color: string, index = 0) => {
+const wrapColorWithIndex = (index: number) => (color: string) => {
   return { color, index }
 }
+
+const wrapColorWithIndexZero = wrapColorWithIndex(0)
 
 const removeSemicolon = (str: string) => {
   return str.endsWith(";") ? str.slice(0, -1) : str
@@ -223,12 +225,7 @@ const checkHasMaybeHex = (token: string) => {
     chain(matchHexFormat),
     map((match) => ({ color: match[0], index: match.index })),
     chain(({ color, index }) =>
-      pipe(
-        color,
-        removeSemicolon,
-        fromPredicate(validateHTMLColorHex),
-        map((color) => ({ color, index }))
-      )
+      pipe(color, removeSemicolon, fromPredicate(validateHTMLColorHex), map(wrapColorWithIndex(index)))
     )
   )
 }
@@ -240,12 +237,7 @@ const checkHasMaybeRgb = (token: string) => {
     chain(matchRgbFormat),
     map((match) => ({ color: match[0], index: match.index })),
     chain(({ color, index }) =>
-      pipe(
-        color,
-        removeSemicolon,
-        fromPredicate(validateHTMLColorRgb),
-        map((color) => ({ color, index }))
-      )
+      pipe(color, removeSemicolon, fromPredicate(validateHTMLColorRgb), map(wrapColorWithIndex(index)))
     )
   )
 }
@@ -367,7 +359,7 @@ export const addColorPreview = ($line: Element) => {
       orElse(() => checkHasMaybeHex(trimedToken)),
       orElse(() => checkHasMaybeRgb(trimedToken)),
       orElse(() => checkMaybeColorName(trimedToken)),
-      map((v) => (isString(v) ? wrapObject(v) : v))
+      map((v) => (isString(v) ? wrapColorWithIndexZero(v) : v))
     )
 
     if (isNone(result)) return

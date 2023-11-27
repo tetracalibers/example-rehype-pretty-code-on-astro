@@ -5,7 +5,6 @@ import {
   chain,
   fromPredicate,
   isNone,
-  match,
   orElse,
   of,
   flatMap,
@@ -15,9 +14,9 @@ import {
   Applicative
 } from "fp-ts/lib/Option"
 import { lookup, of as ofA, filter, sequence } from "fp-ts/lib/Array"
-import { constFalse, flow, pipe } from "fp-ts/lib/function"
+import { constFalse, flow, identity, pipe } from "fp-ts/lib/function"
 import type { Element, ElementContent, Text } from "hast"
-import { left, match as matchE, right, type Either } from "fp-ts/lib/Either"
+import { match as matchE, fromPredicate as fromPredicateE } from "fp-ts/lib/Either"
 import { validateHTMLColorHex, validateHTMLColorName, validateHTMLColorRgb } from "validate-color"
 import { isString } from "fp-ts/lib/string"
 
@@ -80,19 +79,9 @@ const visitMergeNextToken =
     allowToken: (token: string) => boolean
   ) =>
   (token: string): Option<string> => {
-    const judgeContinue =
-      (predicate: (token: string) => boolean) =>
-      (token: string): Either<string, string> => {
-        return pipe(
-          token,
-          fromPredicate(predicate),
-          // 続けるならright, 終了ならleft
-          match(
-            () => left(token), // onNone
-            () => right(token) // onSome
-          )
-        )
-      }
+    const judgeContinue = (predicate: (token: string) => boolean) => (token: string) => {
+      return pipe(token, fromPredicateE(predicate, identity))
+    }
 
     const next = (nextToken: string) => (token: string) => {
       return pipe(nextToken, mergeToken(token), visitMergeNextToken(index + 1, $parent, endCondition, allowToken))

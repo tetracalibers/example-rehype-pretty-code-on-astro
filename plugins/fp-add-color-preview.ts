@@ -18,7 +18,7 @@ import { constFalse, flow, identity, pipe } from "fp-ts/lib/function"
 import type { Element, ElementContent, Text } from "hast"
 import { match as matchE, fromPredicate as fromPredicateE } from "fp-ts/lib/Either"
 import { validateHTMLColorHex, validateHTMLColorName, validateHTMLColorRgb } from "validate-color"
-import { isString } from "fp-ts/lib/string"
+import { includes, isString, startsWith } from "fp-ts/lib/string"
 
 type Properties = Element["properties"]
 
@@ -135,24 +135,6 @@ const pipeValidation = (...fns: ((str: string) => boolean)[]) => {
   }
 }
 
-// #で始まるかどうか
-const isStartWithHash = (str: string) => {
-  return str.startsWith("#")
-}
-
-const isIncludeHash = (str: string) => {
-  return str.includes("#")
-}
-
-// rgbで始まるかどうか
-const isStartWithRgb = (str: string) => {
-  return str.startsWith("rgb")
-}
-
-const isIncludeRgb = (str: string) => {
-  return str.includes("rgb")
-}
-
 const wrapColorWithIndex = (index: number) => (color: string) => {
   return { color, index }
 }
@@ -166,7 +148,7 @@ const removeSemicolon = (str: string) => {
 const checkMaybeHex = (token: string, i: number, $tokens: ElementContent[]) => {
   return pipe(
     token,
-    fromPredicate(isStartWithHash),
+    fromPredicate(startsWith("#")),
     chain(fromPredicate(validateHTMLColorHex)),
     orElse(() =>
       pipe(
@@ -182,7 +164,7 @@ const checkMaybeHex = (token: string, i: number, $tokens: ElementContent[]) => {
 const checkMaybeRgb = (token: string, i: number, $tokens: ElementContent[]) => {
   return pipe(
     token,
-    fromPredicate(isStartWithRgb),
+    fromPredicate(startsWith("rgb")),
     chain(fromPredicate(validateHTMLColorRgb)),
     orElse(() =>
       pipe(
@@ -210,7 +192,7 @@ const matchRgbFormat = (str: string) => {
 const checkHasMaybeHex = (token: string) => {
   return pipe(
     token,
-    fromPredicate(isIncludeHash),
+    fromPredicate(includes("#")),
     chain(matchHexFormat),
     map((match) => ({ color: match[0], index: match.index })),
     chain(({ color, index }) =>
@@ -222,7 +204,7 @@ const checkHasMaybeHex = (token: string) => {
 const checkHasMaybeRgb = (token: string) => {
   return pipe(
     token,
-    fromPredicate(isIncludeRgb),
+    fromPredicate(includes("rgb")),
     chain(matchRgbFormat),
     map((match) => ({ color: match[0], index: match.index })),
     chain(({ color, index }) =>

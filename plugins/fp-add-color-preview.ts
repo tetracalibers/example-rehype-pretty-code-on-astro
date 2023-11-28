@@ -18,7 +18,7 @@ import { constFalse, flow, identity, pipe } from "fp-ts/lib/function"
 import type { Element, ElementContent, Text } from "hast"
 import { match as matchE, fromPredicate as fromPredicateE } from "fp-ts/lib/Either"
 import { validateHTMLColorHex, validateHTMLColorName, validateHTMLColorRgb } from "validate-color"
-import { includes, isString, startsWith } from "fp-ts/lib/string"
+import { includes, isEmpty, isString, startsWith } from "fp-ts/lib/string"
 
 type Properties = Element["properties"]
 
@@ -71,6 +71,11 @@ const mergeToken = (nextToken: string) => (token: string) => {
   return token.concat(nextToken)
 }
 
+// 関数の返り値のbooleanを反転させるコンビネータ
+const not = <T>(fn: (arg: T) => boolean) => {
+  return (arg: T) => !fn(arg)
+}
+
 const visitMergeNextToken =
   (
     index: number,
@@ -91,11 +96,6 @@ const visitMergeNextToken =
       return pipe(nextToken, mergeToken(token), some)
     }
 
-    // 返り値のbooleanを反転させるコンビネータ
-    const not = <A>(fn: (a: A) => boolean) => {
-      return (a: A) => !fn(a)
-    }
-
     return pipe(
       lookAhead(index, $parent),
       map(judgeContinue(not(endCondition))),
@@ -107,7 +107,7 @@ const isHexAlphaNumLength = (withoutHexStr: string) => {
   return [3, 4, 6, 8].includes(withoutHexStr.length)
 }
 
-const isEmpty = (str: string) => {
+const isSpaceOrEmpty = (str: string) => {
   return str.trim() === ""
 }
 
@@ -169,7 +169,7 @@ const checkMaybeRgb = (token: string, i: number, $tokens: ElementContent[]) => {
     orElse(() =>
       pipe(
         token,
-        visitMergeNextToken(i, $tokens, isCloseParen, pipeValidation(isOpenParen, isEmpty, isNumber, isComma)),
+        visitMergeNextToken(i, $tokens, isCloseParen, pipeValidation(isOpenParen, isSpaceOrEmpty, isNumber, isComma)),
         map(removeSemicolon),
         chain(fromPredicate(validateHTMLColorRgb))
       )
@@ -270,12 +270,8 @@ const splitTokenByColor = (color: string, colorStart: number, token: string) => 
   return { before, after }
 }
 
-const isNotEmptyString = (str: string) => {
-  return str.length > 0
-}
-
 const createElementHasText = (properties: Properties) => (text: string) =>
-  pipe(text, fromPredicate(isNotEmptyString), chain(flow(createTextNode, ofA, createSpanElement(properties), of)))
+  pipe(text, fromPredicate(not(isEmpty)), chain(flow(createTextNode, ofA, createSpanElement(properties), of)))
 
 // 色コードとそうでない部分を分割し、間に色プレビュー用のspanを追加する
 const insertColorPreviewElementWithSplit = (

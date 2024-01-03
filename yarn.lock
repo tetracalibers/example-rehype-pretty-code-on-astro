@@ -100,6 +100,14 @@
     is-wsl "^3.0.0"
     which-pm-runs "^1.1.0"
 
+"@babel/code-frame@^7.0.0":
+  version "7.23.4"
+  resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.23.4.tgz#03ae5af150be94392cb5c7ccd97db5a19a5da6aa"
+  integrity sha512-r1IONyb6Ia+jYR2vvIDhdWdlTGhqbBoFqLTQidzZ4kepUFH15ejXvFHxCVbtl7BOXIudsIubf4E81xeA3h3IXA==
+  dependencies:
+    "@babel/highlight" "^7.23.4"
+    chalk "^2.4.2"
+
 "@babel/code-frame@^7.22.13":
   version "7.22.13"
   resolved "https://registry.yarnpkg.com/@babel/code-frame/-/code-frame-7.22.13.tgz#e3c1c099402598483b7a8c46a721d1038803755e"
@@ -247,6 +255,15 @@
   version "7.22.20"
   resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.22.20.tgz#4ca92b71d80554b01427815e06f2df965b9c1f54"
   integrity sha512-dkdMCN3py0+ksCgYmGG8jKeGA/8Tk+gJwSYYlFGxG5lmhfKNoAy004YpLxpS1W2J8m/EK2Ew+yOs9pVRwO89mg==
+  dependencies:
+    "@babel/helper-validator-identifier" "^7.22.20"
+    chalk "^2.4.2"
+    js-tokens "^4.0.0"
+
+"@babel/highlight@^7.23.4":
+  version "7.23.4"
+  resolved "https://registry.yarnpkg.com/@babel/highlight/-/highlight-7.23.4.tgz#edaadf4d8232e1a961432db785091207ead0621b"
+  integrity sha512-acGdbYSfp2WheJoJm/EBBBLh/ID8KDc64ISZ9DYtBmC8/Q204PZJLHyzeB5qMzJ5trcOkybd78M4x2KWsUq++A==
   dependencies:
     "@babel/helper-validator-identifier" "^7.22.20"
     chalk "^2.4.2"
@@ -1494,6 +1511,11 @@ expand-template@^2.0.3:
   version "2.0.3"
   resolved "https://registry.yarnpkg.com/expand-template/-/expand-template-2.0.3.tgz#6e14b3fcee0f3a6340ecb57d2e8918692052a47c"
   integrity sha512-XYfuKMvj4O35f/pOXLObndIRvyQ+/+6AhODh+OKWj9S9498pHHn/IMszH+gt0fBCRWMNfk1ZSp5x3AifmnI2vg==
+
+expressive-ts@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/expressive-ts/-/expressive-ts-0.0.2.tgz#3ce75474879e610c71cfdfb88d106e8164f26cf3"
+  integrity sha512-FypiruhZHavVe7x7uLGRv34MwKdBTSMik57pDyHlLw44y3ivxnLfyqmcKo6sAclagU5LBllpdeE06B1HOSHYVw==
 
 extend-shallow@^2.0.1:
   version "2.0.1"
@@ -2906,6 +2928,13 @@ parse5@^7.0.0, parse5@^7.1.2:
   integrity sha512-Czj1WaSVpaoj0wbhMzLmWD69anp2WH7FXMB9n1Sy8/ZFF9jolSQVMu1Ij5WIyGmcBmhk7EOndpO4mIpihVqAXw==
   dependencies:
     entities "^4.4.0"
+
+parser-ts@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/parser-ts/-/parser-ts-0.7.0.tgz#b43a7096495d7027cf793a397b25ce74fcbb53e3"
+  integrity sha512-YBJYgQ6j2DiKryKkYUrw0a7WiUb2DGnanffFZNz5cRTaoTncSxjKCio6ocEBSAa26jFXr0XSNjaYXUrL61BISA==
+  dependencies:
+    "@babel/code-frame" "^7.0.0"
 
 path-browserify@^1.0.1:
   version "1.0.1"

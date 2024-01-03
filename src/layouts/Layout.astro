@@ -1,9 +1,19 @@
 ---
+import { consoleHTML } from "../lib/html-structure"
+
+import "../styles/global.css"
+import "../styles/pretty-code.css"
+
 interface Props {
   title: string
 }
 
 const { title } = Astro.props
+
+if (import.meta.env.DEV && false) {
+  const html = await Astro.slots.render("default")
+  consoleHTML(html, { pre: 1, code: 1, line: 7, token: 1 })
+}
 ---
 
 <!doctype html>
@@ -20,27 +30,3 @@ const { title } = Astro.props
     <slot />
   </body>
 </html>
-<style is:global>
-  :root {
-    --accent: 136, 58, 234;
-    --accent-light: 224, 204, 250;
-    --accent-dark: 49, 10, 101;
-    --accent-gradient: linear-gradient(45deg, rgb(var(--accent)), rgb(var(--accent-light)) 30%, white 60%);
-  }
-  html {
-    font-family: system-ui, sans-serif;
-    background: #13151a;
-    background-size: 224px;
-  }
-  code {
-    font-family:
-      Menlo,
-      Monaco,
-      Lucida Console,
-      Liberation Mono,
-      DejaVu Sans Mono,
-      Bitstream Vera Sans Mono,
-      Courier New,
-      monospace;
-  }
-</style>

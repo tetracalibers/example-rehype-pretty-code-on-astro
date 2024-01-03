@@ -1,0 +1,122 @@
+@import url("https://fonts.googleapis.com/css2?family=Red+Hat+Mono&display=swap");
+
+pre,
+code {
+  font-family: "Red Hat Mono", monospace;
+}
+
+pre {
+  padding-block: 0.8em;
+  padding-inline: 0;
+  margin: 0;
+  overflow-x: auto;
+  border-radius: 0.3em;
+  line-height: 1.7;
+}
+
+pre > code > [data-line] {
+  padding-inline-start: 0.5em;
+  padding-inline-end: 1em;
+  border-inline-start: 0.5em solid transparent;
+}
+
+/* switch dark or light theme ----------------- */
+
+@media (prefers-color-scheme: dark) {
+  :is(pre, code)[data-theme="light"] {
+    display: none;
+  }
+}
+
+@media (prefers-color-scheme: light), (prefers-color-scheme: no-preference) {
+  :is(pre, code)[data-theme="dark"] {
+    display: none;
+  }
+}
+
+/* show line numbers -------------------------- */
+
+pre > code[data-line-numbers] {
+  counter-reset: line;
+}
+
+pre > code[data-line-numbers] > [data-line]::before {
+  counter-increment: line;
+  content: counter(line);
+
+  margin-inline-start: 0.5em;
+  margin-inline-end: 1em;
+  color: #7ca2dfad;
+
+  display: inline-block;
+  text-align: right;
+  width: 1ch;
+}
+
+pre > code[data-line-numbers-max-digits="2"] > [data-line]::before {
+  width: 2ch;
+}
+
+pre > code[data-line-numbers-max-digits="3"] > [data-line]::before {
+  width: 3ch;
+}
+
+/* show highlighted lines --------------------- */
+
+pre > code[data-theme="light"] > [data-highlighted-line] {
+  background-color: rgba(206, 253, 255, 0.45);
+  border-color: #f6c6ea;
+}
+pre > code[data-theme="dark"] > [data-highlighted-line] {
+  background-color: rgb(74, 76, 94);
+  border-color: #b2a4ff;
+}
+pre > code:has([data-highlighted-line]) > :not([data-highlighted-line]) {
+  opacity: 0.5;
+}
+
+/* color preview ------------------------------ */
+
+:has(> [data-color-preview]) {
+  margin-inline-start: 2px;
+  position: relative;
+}
+[data-color-preview] {
+  --preview-box-size: 0.8em;
+
+  display: inline-block;
+  width: var(--preview-box-size);
+  height: var(--preview-box-size);
+  margin-inline-end: 3.5px;
+  vertical-align: middle;
+  position: relative;
+
+  /** light/dark両対応するための二重ボーダー */
+  box-shadow:
+    0 0 0 1px white,
+    0 0 0 2px #374259;
+
+  /* 市松模様 */
+  --checker-color: #64748b;
+  background-image: linear-gradient(
+      45deg,
+      var(--checker-color) 25%,
+      transparent 25%,
+      transparent 75%,
+      var(--checker-color) 75%
+    ),
+    linear-gradient(45deg, var(--checker-color) 25%, transparent 25%, transparent 75%, var(--checker-color) 75%);
+  background-position:
+    0 0,
+    calc(var(--preview-box-size) * 0.5) calc(var(--preview-box-size) * 0.5);
+}
+[data-color-preview]::before {
+  content: "";
+  display: inline-block;
+  position: absolute;
+  width: var(--preview-box-size);
+  height: var(--preview-box-size);
+  inset: 0;
+
+  background-color: inherit;
+}

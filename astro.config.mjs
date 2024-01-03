@@ -1,8 +1,14 @@
 import { defineConfig } from "astro/config"
 import rehypePrettyCode from "rehype-pretty-code"
+import { addColorPreview } from "./plugins/fp-add-color-preview"
 
 const prettyCodeOptions = {
-  /** これから追加していく */
+  theme: "material-theme-lighter",
+  onVisitLine(element) {
+    console.time("addColorPreview")
+    addColorPreview(element)
+    console.timeEnd("addColorPreview")
+  }
 }
 
 export default defineConfig(
